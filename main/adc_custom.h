@@ -27,8 +27,6 @@
 #define CELSIUS_25_TO_KELVIN	298.15f
 /* NTC  Thermistor 103AT-2 NTC defines */
 
-void adc_init(void);
-esp_err_t adc_read(int* voltage);
-float adc_externalTemperatureCalc(uint16_t raw);
+float adc_getTemperature(void);
 
 #endif

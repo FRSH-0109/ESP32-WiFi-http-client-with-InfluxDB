@@ -30,6 +30,7 @@
 #include "nvs_flash.h"
 #include "esp_netif.h"
 
+#include "tasks_info.h"
 #include "cJSON.h"
 #include "SETTINGS_PRIVATE.h"
 #include "wifi_custom.h"
@@ -37,6 +38,10 @@
 #include "adc_custom.h"
 
 static const char *TAG = "Main";
+
+float sensor1, sensor2, sensor3;
+
+void adc_task( void *pvParameters );
 
 void app_main(void)
 {
@@ -52,28 +57,26 @@ void app_main(void)
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
     wifi_init();
 
-    //Initialize ADC in oneShot mode
-    ESP_LOGI(TAG, "ADC  init");
-    adc_init();
-
-    uint8_t i = 0;
-    int raw = 0;
+    // Create a task for adc temperature reading
+    TaskFunction_t adc_task_handle = NULL;
+    xTaskCreate(adc_task, "Adc Task", TASK_SIZE_ADC, NULL, TASK_PRIO_ADC, &adc_task_handle);
+    
     while (true)
     {
-        vTaskDelay(pdMS_TO_TICKS(2000));
-        ESP_ERROR_CHECK(adc_read(&raw));
-        ESP_LOGI(TAG, "ADC RAW read: %d", raw);
-        float temperature = adc_externalTemperatureCalc((uint16_t)raw);
-        ESP_LOGI(TAG, "ADC read: %.3f", temperature);
+        vTaskDelay(pdMS_TO_TICKS(taskDelay_Main));
+        
+        sensor1 = adc_getTemperature();
+        sensor2 = adc_getTemperature();
+        sensor3 = adc_getTemperature();
 
-        cJSON *json = cJSON_CreateObject(); 
-        cJSON_AddNumberToObject(json, "a", i); 
-        cJSON_AddNumberToObject(json, "NTC", temperature);
+        cJSON *json = cJSON_CreateObject();  
+        cJSON_AddNumberToObject(json, "Analog NTC", sensor1);
+        cJSON_AddNumberToObject(json, "BME280", sensor2);
+        cJSON_AddNumberToObject(json, "Fermion", sensor3);
         char *post_data = cJSON_Print(json); 
 
         http_post_data(post_data);
+        ESP_LOGI(TAG, "HTTP POST data sent");
         cJSON_Delete(json);
-
-        ++i;
     }
 }

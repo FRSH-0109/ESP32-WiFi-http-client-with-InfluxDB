@@ -1,3 +1,21 @@
+/**
+ * @file wifi_custom.c
+ * @brief Custom WiFi initialization and event handling for ESP32.
+ *
+ * This file contains functions to initialize WiFi in station mode,
+ * handle WiFi events, and manage connection retries.
+ *
+ * @author Kamil Kośnik
+ * @date   2025-03-07
+ *
+ * @note
+ * - Ensure that the WiFi SSID and password are defined in wifi_custom.h or.
+ * - other header file included like "SETTINGS_PRIVATE.h".
+ * 
+ * @par License:
+ * - This code is released under the MIT License.
+ */
+
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "protocol_examples_common.h"
@@ -6,13 +24,12 @@
 
 #include "wifi_custom.h"
 
-/* FreeRTOS event group to signal when we are connected*/
+/* FreeRTOS event group to signal basic WiFi events*/
 static EventGroupHandle_t s_wifi_event_group;
 
-static const char *TAG = "WiFi functions file";
+static const char *TAG = "WiFi Custom";
 
 static int s_retry_num = 0;
-
 
 void event_handler(void* arg, esp_event_base_t event_base,
                                 int32_t event_id, void* event_data)
@@ -36,7 +53,7 @@ void event_handler(void* arg, esp_event_base_t event_base,
     }
 }
 
-void wifi_init_sta(void)
+void wifi_init(void)
 {
     s_wifi_event_group = xEventGroupCreate();
 

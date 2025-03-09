@@ -1,3 +1,20 @@
+/**
+ * @file wifi_custom.h
+ * @brief Custom WiFi initialization and event handling for ESP32.
+ *
+ * This file contains functions to initialize WiFi in station mode,
+ * handle WiFi events, and manage connection retries.
+ *
+ * @author Kamil Kośnik
+ * @date   2025-03-07
+ *
+ * @note
+ * - Ensure that the WiFi SSID and password are defined in wifi_custom.h or
+ *   other header file included like "SETTINGS_PRIVATE.h".
+ * 
+ * @par License:
+ * - This code is released under the MIT License.
+ */
 
 #include "SETTINGS_PRIVATE.h"
 
@@ -15,7 +32,7 @@
     #define MY_ESP_WIFI_PASS "MY_WIFI_PASSOWRD"
 #endif
 
-#define EXAMPLE_ESP_MAXIMUM_RETRY  10
+#define EXAMPLE_ESP_MAXIMUM_RETRY  3
 #define ESP_WIFI_SAE_MODE WPA3_SAE_PWE_BOTH
 #define ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_OPEN
 #define EXAMPLE_H2E_IDENTIFIER CONFIG_ESP_WIFI_PW_ID
@@ -29,6 +46,6 @@
 
 void event_handler(void* arg, esp_event_base_t event_base,
     int32_t event_id, void* event_data);
-void wifi_init_sta(void);
+void wifi_init(void);
 
 #endif

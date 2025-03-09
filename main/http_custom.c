@@ -1,3 +1,21 @@
+/**
+ * @file http_custom.c
+ * @brief Custom HTTP client functions for ESP32.
+ *
+ * This file contains functions to handle HTTP client events and
+ * send HTTP POST requests.
+ *
+ * @author Kamil Kośnik
+ * @date   2025-03-07
+ *
+ * @note
+ * - Ensure that the Telegraf broker URL is defined in this file or
+ *   another header file included like "SETTINGS_PRIVATE.h".
+ * 
+ * @par License:
+ * - This code is released under the MIT License.
+ */
+
 #include "esp_log.h"
 #include "esp_http_client.h"
 

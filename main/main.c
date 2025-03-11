@@ -36,12 +36,14 @@
 #include "wifi_custom.h"
 #include "http_custom.h"
 #include "adc_custom.h"
+#include "bme280_driver.h"
 
 static const char *TAG = "Main";
 
 float sensor1, sensor2, sensor3;
 
 void adc_task( void *pvParameters );
+void bme280_task( void *pvParameters );
 
 void app_main(void)
 {
@@ -58,16 +60,22 @@ void app_main(void)
     wifi_init();
 
     // Create a task for adc temperature reading
-    TaskFunction_t adc_task_handle = NULL;
-    xTaskCreate(adc_task, "Adc Task", TASK_SIZE_ADC, NULL, TASK_PRIO_ADC, &adc_task_handle);
-    
+    TaskHandle_t* adc_task_handle = NULL;
+    xTaskCreate(adc_task, "Adc Task", TASK_SIZE_ADC, NULL, TASK_PRIO_ADC, adc_task_handle);
+
+    // Create a task for BME280 sensor handling
+    TaskHandle_t* bme280_task_handle = NULL;
+    xTaskCreate(bme280_task, "BME280 Task", TASK_SIZE_ADC, NULL, TASK_PRIO_ADC, bme280_task_handle);
+
     while (true)
     {
         vTaskDelay(pdMS_TO_TICKS(taskDelay_Main));
         
         sensor1 = adc_getTemperature();
-        sensor2 = adc_getTemperature();
+        sensor2 = bme280_getTemperature();
         sensor3 = adc_getTemperature();
+
+        ESP_LOGI(TAG, "ADC %.3f *C, BME280 %.3f *C, Ten trzeci %.3f *C", sensor1, sensor2, sensor3);
 
         cJSON *json = cJSON_CreateObject();  
         cJSON_AddNumberToObject(json, "Analog NTC", sensor1);

@@ -32,6 +32,7 @@
 #define priorityREAL_TIME           ( priorityNORMAL + 3U )  // 6
 
 #define TASK_PRIO_ADC               ( priorityNORMAL )
+#define TASK_PRIO_BME280            ( priorityNORMAL )
 
 #if (configMAX_PRIORITIES < priorityIDLE)
     #error Idle task priority too low
@@ -60,5 +61,6 @@
 // Task delays
 #define taskDelay_ADC               ( 1000U )
 #define taskDelay_Main              ( 1000U )
+#define taskDelay_BME280            ( 100U )
 
 #endif /* TASKS_INFO_H_ */

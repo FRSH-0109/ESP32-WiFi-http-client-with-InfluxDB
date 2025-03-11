@@ -89,7 +89,7 @@ void adc_task( void *pvParameters )
         ESP_ERROR_CHECK(adc_read(&raw));
         // ESP_LOGI(TAG, "ADC RAW read: %d", raw);
         temperature_sensor_adc = adc_externalTemperatureCalc((uint16_t)raw);
-        ESP_LOGI(TAG, "ADC read: %.3f *C", temperature_sensor_adc);
+        // ESP_LOGI(TAG, "ADC read: %.3f *C", temperature_sensor_adc);
 
         vTaskDelay(pdMS_TO_TICKS(taskDelay_ADC));
     }

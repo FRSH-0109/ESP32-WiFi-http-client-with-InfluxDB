@@ -37,7 +37,7 @@ static void bme280_init(void)
     ESP_ERROR_CHECK(i2c_param_config(I2C_NUM_0, &i2c_cfg));
     ESP_ERROR_CHECK(i2c_driver_install(I2C_NUM_0, I2C_MODE_MASTER, 0, 0, 0));
 
-    bmx280_t* bmx280 = bmx280_create(I2C_NUM_0);
+    bmx280 = bmx280_create(I2C_NUM_0);
 
     if (!bmx280) { 
         ESP_LOGE(TAG, "Could not create bmx280 driver.");

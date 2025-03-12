@@ -27,8 +27,8 @@
 #include "driver/i2c_types.h"
 #include "bmx280.h"
 
-#define BMX280_SDA_NUM GPIO_NUM_13
-#define BMX280_SCL_NUM GPIO_NUM_14
+#define BMX280_SDA_NUM GPIO_NUM_21
+#define BMX280_SCL_NUM GPIO_NUM_22
 #define CONFIG_BMX280_I2C_CLK_SPEED_HZ 100000
 
 void bme380_task( void *pvParameters );

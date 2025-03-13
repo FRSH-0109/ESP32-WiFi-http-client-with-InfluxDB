@@ -33,6 +33,7 @@
 
 #define TASK_PRIO_ADC               ( priorityNORMAL )
 #define TASK_PRIO_BME280            ( priorityNORMAL )
+#define TASK_PRIO_SHTC3             ( priorityNORMAL )
 
 #if (configMAX_PRIORITIES < priorityIDLE)
     #error Idle task priority too low
@@ -52,6 +53,9 @@
 #define taskSizeSTORAGE             ( 4096U * 2 )
 
 #define TASK_SIZE_ADC               ( taskSizeNORMAL )
+#define TASK_SIZE_BME280            ( taskSizeBIGGEST )
+#define TASK_SIZE_SHTC3             ( taskSizeBIGGEST )
+
 
 #if (configMINIMAL_STACK_SIZE > taskSizeMINIMAL)
     #error Minimal task size too small
@@ -62,5 +66,6 @@
 #define taskDelay_ADC               ( 1000U )
 #define taskDelay_Main              ( 1000U )
 #define taskDelay_BME280            ( 100U )
+#define taskDelay_SHTC3             ( 100U )
 
 #endif /* TASKS_INFO_H_ */

@@ -25,7 +25,7 @@
 #include "tasks_info.h"
 #include "driver/i2c.h"
 #include "driver/i2c_types.h"
-#include "bmx280.h"
+#include "BME280_driver/bmx280.h"
 
 #define BMX280_SDA_NUM GPIO_NUM_21
 #define BMX280_SCL_NUM GPIO_NUM_22

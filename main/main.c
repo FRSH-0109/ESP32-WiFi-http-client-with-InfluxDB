@@ -30,13 +30,17 @@
 #include "nvs_flash.h"
 #include "esp_netif.h"
 
+#include "driver/i2c_types.h"
+#include "driver/i2c_master.h"
+
 #include "tasks_info.h"
 #include "cJSON.h"
 #include "SETTINGS_PRIVATE.h"
 #include "wifi_custom.h"
 #include "http_custom.h"
 #include "adc_custom.h"
-#include "bme280_driver.h"
+#include "BME280_driver/bme280_driver.h"
+#include "SHTC3_driver/shtc3_driver.h"
 
 static const char *TAG = "Main";
 
@@ -44,6 +48,26 @@ float sensor1, sensor2, sensor3;
 
 void adc_task( void *pvParameters );
 void bme280_task( void *pvParameters );
+
+#define I2C_SDA_GPIO GPIO_NUM_21
+#define I2C_SCL_GPIO GPIO_NUM_22
+
+i2c_master_bus_handle_t bus_handle;
+
+void i2c_bus_init(uint8_t sda_io, uint8_t scl_io)
+{
+    i2c_master_bus_config_t i2c_bus_config = {
+        .i2c_port = -1,
+        .sda_io_num = sda_io,
+        .scl_io_num = scl_io,
+        .clk_source = I2C_CLK_SRC_DEFAULT,
+        .glitch_ignore_cnt = 7,
+        .flags.enable_internal_pullup = true,
+    };
+
+    ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_bus_config, &bus_handle));
+    ESP_LOGI(TAG, "I2C master bus created");
+}
 
 void app_main(void)
 {
@@ -59,13 +83,19 @@ void app_main(void)
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
     wifi_init();
 
-    // Create a task for adc temperature reading
+    i2c_bus_init(I2C_SDA_GPIO, I2C_SCL_GPIO);
+
+    // // Create a task for adc temperature reading
     TaskHandle_t* adc_task_handle = NULL;
     xTaskCreate(adc_task, "Adc Task", TASK_SIZE_ADC, NULL, TASK_PRIO_ADC, adc_task_handle);
 
     // Create a task for BME280 sensor handling
     TaskHandle_t* bme280_task_handle = NULL;
-    xTaskCreate(bme280_task, "BME280 Task", TASK_SIZE_ADC, NULL, TASK_PRIO_ADC, bme280_task_handle);
+    xTaskCreate(bme280_task, "BME280 Task", TASK_SIZE_BME280, (void *)&bus_handle, TASK_PRIO_BME280, bme280_task_handle);
+
+    // Create a task for SHTC3 sensor handling
+    TaskHandle_t* shtc3_task_handle = NULL;
+    xTaskCreate(shtc3_task, "SHTC3 Task", TASK_SIZE_SHTC3, (void *)&bus_handle, TASK_PRIO_SHTC3, shtc3_task_handle);
 
     while (true)
     {
@@ -73,18 +103,18 @@ void app_main(void)
         
         sensor1 = adc_getTemperature();
         sensor2 = bme280_getTemperature();
-        sensor3 = adc_getTemperature();
+        sensor3 = shtc3_getTemperature();
 
-        ESP_LOGI(TAG, "ADC %.3f *C, BME280 %.3f *C, Ten trzeci %.3f *C", sensor1, sensor2, sensor3);
+        ESP_LOGI(TAG, "ADC %.3f *C, BME280 %.3f *C, SHTC3 %.3f *C", sensor1, sensor2, sensor3);
 
-        cJSON *json = cJSON_CreateObject();  
-        cJSON_AddNumberToObject(json, "Analog NTC", sensor1);
-        cJSON_AddNumberToObject(json, "BME280", sensor2);
-        cJSON_AddNumberToObject(json, "Fermion", sensor3);
-        char *post_data = cJSON_Print(json); 
+        // cJSON *json = cJSON_CreateObject();  
+        // cJSON_AddNumberToObject(json, "Analog NTC", sensor1);
+        // cJSON_AddNumberToObject(json, "BME280", sensor2);
+        // cJSON_AddNumberToObject(json, "Fermion", sensor3);
+        // char *post_data = cJSON_Print(json); 
 
-        http_post_data(post_data);
-        ESP_LOGI(TAG, "HTTP POST data sent");
-        cJSON_Delete(json);
+        // http_post_data(post_data);
+        // ESP_LOGI(TAG, "HTTP POST data sent");
+        // cJSON_Delete(json);
     }
 }

@@ -10,8 +10,10 @@
 #ifndef _BMX280_H_
 #define _BMX280_H_
 
-#define CONFIG_USE_I2C_MASTER_DRIVER 0
-#define CONFIG_BMX280_TIMEOUT 1
+#define CONFIG_USE_I2C_MASTER_DRIVER 1
+#define CONFIG_BMX280_EXPECT_BME280 1
+#define CONFIG_BMX280_TIMEOUT 100
+#define CONFIG_BMX280_I2C_CLK_SPEED_HZ 100000
 
 #include <stdint.h>
 #include <limits.h>
@@ -20,6 +22,7 @@
 
 #include "bmx280_bits.h"
 #include "driver/i2c.h"
+#include "driver/i2c_master.h"
 #include "driver/i2c_types.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"

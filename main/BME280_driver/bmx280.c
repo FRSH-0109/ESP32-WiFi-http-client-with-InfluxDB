@@ -434,7 +434,7 @@ bmx280_t* bmx280_create_master(i2c_master_bus_handle_t bus_handle)
         bmx280->bus_handle = bus_handle;
         bmx280->dev_cfg.dev_addr_length = I2C_ADDR_BIT_LEN_7;
         bmx280->dev_cfg.device_address = 0xDE;
-        bmx280->dev_cfg.scl_speed_hz =CONFIG_BMX280_I2C_CLK_SPEED_HZ;
+        bmx280->dev_cfg.scl_speed_hz = CONFIG_BMX280_I2C_CLK_SPEED_HZ;
         bmx280->i2c_dev = NULL;
         bmx280->chip_id = 0xAD;
     }

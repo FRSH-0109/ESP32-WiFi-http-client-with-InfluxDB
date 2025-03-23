@@ -44,7 +44,9 @@
 
 static const char *TAG = "Main";
 
-float sensor1, sensor2, sensor3;
+float sensor1Temp, sensor2Temp, sensor3Temp;
+float sensor1Hum, sensor2Hum;
+float sensor1Press;
 
 void adc_task( void *pvParameters );
 void bme280_task( void *pvParameters );
@@ -101,20 +103,34 @@ void app_main(void)
     {
         vTaskDelay(pdMS_TO_TICKS(taskDelay_Main));
         
-        sensor1 = adc_getTemperature();
-        sensor2 = bme280_getTemperature();
-        sensor3 = shtc3_getTemperature();
+        sensor1Temp = adc_getTemperature();
+        sensor2Temp = bme280_getTemperature();
+        sensor3Temp = shtc3_getTemperature();
+        ESP_LOGI(TAG, "ADC %.3f *C, BME280 %.3f *C, SHTC3 %.3f *C", sensor1Temp, sensor2Temp, sensor3Temp);
 
-        ESP_LOGI(TAG, "ADC %.3f *C, BME280 %.3f *C, SHTC3 %.3f *C", sensor1, sensor2, sensor3);
+        sensor1Hum = bme280_getHumidity();
+        sensor2Hum = shtc3_getHumidity();
 
-        // cJSON *json = cJSON_CreateObject();  
-        // cJSON_AddNumberToObject(json, "Analog NTC", sensor1);
-        // cJSON_AddNumberToObject(json, "BME280", sensor2);
-        // cJSON_AddNumberToObject(json, "Fermion", sensor3);
-        // char *post_data = cJSON_Print(json); 
+        sensor1Press = bme280_getPressure();
 
-        // http_post_data(post_data);
-        // ESP_LOGI(TAG, "HTTP POST data sent");
-        // cJSON_Delete(json);
+        cJSON *json = cJSON_CreateObject();  
+        cJSON *analog_NTC = cJSON_AddObjectToObject(json, "Analog NTC");  
+        cJSON *BME280 = cJSON_AddObjectToObject(json, "BME280");  
+        cJSON *SHTC3 = cJSON_AddObjectToObject(json, "SHTC3");  
+        
+        cJSON_AddNumberToObject(analog_NTC, "Temperature", sensor1Temp);
+        cJSON_AddNumberToObject(BME280, "Temperature", sensor2Temp);
+        cJSON_AddNumberToObject(SHTC3, "Temperature", sensor3Temp);
+
+        cJSON_AddNumberToObject(BME280, "Humidity", sensor1Hum);
+        cJSON_AddNumberToObject(SHTC3, "Humidity", sensor2Hum);
+
+        cJSON_AddNumberToObject(BME280, "Pressure", sensor1Press);
+
+        char *post_data = cJSON_Print(json); 
+        http_post_data(post_data);
+        ESP_LOGI(TAG, "HTTP POST data sent");
+        cJSON_Delete(json);
+        free(post_data);
     }
 }

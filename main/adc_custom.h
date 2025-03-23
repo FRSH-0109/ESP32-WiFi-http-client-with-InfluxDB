@@ -17,7 +17,7 @@
 
 /* Extenal Temperature defines */
 #define TEMPERATURE_EXTERNAL_UP_RESISTOR	10000
-#define TEMPERATURE_EXTERNAL_OFFSET	0.0f
+#define TEMPERATURE_EXTERNAL_OFFSET	-10.0f
 /* Battery Temperature defines */
 
 /* NTC  Thermistor 103AT-2 NTC defines */

@@ -56,7 +56,7 @@ void shtc3_task( void *pvParameters )
             if(err != ESP_OK) {
                 ESP_LOGE(TAG, "WRITE: Failed to start measurement on SHTC3 sensor");
             } else {
-                ESP_LOGI(TAG, "WRITE: Start measurement on SHTC3 sensor");
+                // ESP_LOGI(TAG, "WRITE: Start measurement on SHTC3 sensor");
                 readTodo = true;
             }
         } 
@@ -66,11 +66,11 @@ void shtc3_task( void *pvParameters )
             if(err != ESP_OK) {
                 ESP_LOGE(TAG, "READ: Failed to read data from SHTC3 sensor");
             } else {
-                ESP_LOGI(TAG, "READ: Temperature: %.2f C, Humidity: %.2f %%", temperature, humidity);
+                // ESP_LOGI(TAG, "READ: Temperature: %.2f C, Humidity: %.2f %%", temperature, humidity);
                 readTodo = false;
             }
         }        
-        vTaskDelay(pdMS_TO_TICKS(500));
+        vTaskDelay(pdMS_TO_TICKS(taskDelay_SHTC3));
     }
 }
 

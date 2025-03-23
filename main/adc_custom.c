@@ -58,13 +58,6 @@ static float adc_externalTemperatureCalc(uint16_t raw)
 {
     uint16_t avg = raw;
     uint16_t ADC_RESOLUTION = pow(2.0, (double)adc_channel_config.bitwidth);
-	// uint32_t sum = 0;
-	// for (uint8_t var = 0; var < ADC_EXTERNAL_TEMPERATURE_BUFFER_SIZE; ++var)
-	// {
-	// 	sum += AdcCustomHandle.temperatureExternalRaw[var];
-	// }
-	// uint32_t avg = sum / ADC_EXTERNAL_TEMPERATURE_BUFFER_SIZE;
-	// if(avg == 0){avg = 1;} //prevent dividing by 0
 
 	/* Calculate temperature of thermistor in *C using adc measurement */
 	float l = log((float)(avg*TEMPERATURE_EXTERNAL_UP_RESISTOR) / (float)(NTC_THERMISTOR_DEFAULT*(ADC_RESOLUTION-avg)));
